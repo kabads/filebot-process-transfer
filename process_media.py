@@ -9,9 +9,6 @@ parser = argparse.ArgumentParser(description='Process media files')
 parser.add_argument('source', type=str, help='Source file')
 args = parser.parse_args()
 
-def process_output(line):
-    print(line)
-
 
 def find_output(line):
     file = line.split('[')[-1].replace(']', '')
