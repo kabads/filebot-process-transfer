@@ -24,19 +24,23 @@ def process_media(source):
         filename = find_output(output[-3])
         return filename
 
+def main():
 
-filename = process_media(args.source)
-print(f"Processed filename: {filename}")
+    filename = process_media(args.source)
+    print(f"Processed filename: {filename}")
+    
+    # Let's move the file to the remote location
+    try: 
+        sh.rsync ('-avz', '-e', SSH_PRIV_KEY, filename, REMOTE_LOCATION)
+    except sh.ErrorReturnCode as e:
+        print('Error in file transfer: {e}')
+    except Exception as e:
+        print('Unexpected error: {e}')
+        traceback.print_exc()
+    
+    # Let's rename the file back
+    sh.mv(filename, args.source)
+    # TODO Once this process is proven, we can delete the original
 
-# Let's move the file to the remote location
-try: 
-    sh.rsync ('-avz', '-e', SSH_PRIV_KEY, filename, REMOTE_LOCATION)
-except sh.ErrorReturnCode as e:
-    print('Error in file transfer: {e}')
-except Exception as e:
-    print('Unexpected error: {e}')
-    traceback.print_exc()
-
-# Let's rename the file back
-sh.mv(filename, args.source)
-# TODO Once this process is proven, we can delete the original
+if __name__ == '__main__':
+    main()
