@@ -40,9 +40,8 @@ def main():
     except Exception as e:
         print('Unexpected error: {e}')
         traceback.print_exc()
-    # Let's rename the file back
-    sh.mv(filename, args.source)
-    # TODO Once this process is proven, we can delete the original
+    # Let's delete the file now it has been processed
+    sh.rm(filename)
 
 if __name__ == '__main__':
     main()
