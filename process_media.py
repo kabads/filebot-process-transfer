@@ -1,10 +1,11 @@
+#/usr/bin/python
 import sh
 import argparse
 import os
 import sys
 
-SSH_PRIV_KEY = 'ssh -i /home/adam/.ssh/id_rsa'
-REMOTE_LOCATION = "adam@pi:/mnt/2tb/kabads-films/"
+SSH_PRIV_KEY = '<PATH TO PRIVATE KEY>'
+REMOTE_LOCATION = "<SSH REMOTE LOCATION - e.g. user@host:/path>"
 
 parser = argparse.ArgumentParser(description='Process media files')
 parser.add_argument('source', type=str, help='Source file')
@@ -37,11 +38,16 @@ def main():
         sh.rsync ('-avz', '-e', SSH_PRIV_KEY, filename, REMOTE_LOCATION)
     except sh.ErrorReturnCode as e:
         print('Error in file transfer: {e}')
+        sys.exit()
     except Exception as e:
         print('Unexpected error: {e}')
         traceback.print_exc()
+        sys.exit()
     # Let's delete the file now it has been processed
     sh.rm(filename)
 
+    sh.curl(r"http://<host>:<port>/library/sections/1/refresh?X-Plex-Token=<token>")
+    # except Exception as e:
+    #     print("Can't ping server to refresh", e)
 if __name__ == '__main__':
     main()
